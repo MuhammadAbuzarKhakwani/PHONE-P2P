@@ -820,4 +820,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonCancel => 'Cancel';
+
+  @override
+  String get builtBy => 'by Khakwani Dev';
+
+  @override
+  String get developer => 'Developer';
+
+  @override
+  String get developerName => 'Khakwani Dev';
+
+  @override
+  String get basedOn => 'Based on';
+
+  @override
+  String get basedOnValue => 'WDCable by Jing Jie (MIT)';
 }

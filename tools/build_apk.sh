@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# One command to check, build and install the WDCable debug APK (Linux/macOS).
+# One command to check, build and install the Khakwani P2P debug APK (Linux/macOS).
 #
 #   ./tools/build_apk.sh              build only
 #   ./tools/build_apk.sh --install    build, then install on every attached device
@@ -85,6 +85,12 @@ fi
 # --- 4. dependencies and analysis -----------------------------------------
 step "4/6  Dependencies and analysis"
 flutter pub get || exit 1
+
+# android/gradlew and gradle-wrapper.jar are gitignored in this project, so a
+# fresh clone has no wrapper. The Flutter tool injects it during configuration;
+# without this, ./gradlew below exits 127 (command not found).
+flutter build apk --config-only || exit 1
+
 flutter analyze --no-fatal-infos || \
   echo "flutter analyze reported findings. Continuing to the build so compile errors show too."
 
@@ -94,7 +100,11 @@ if [ "$SKIP_TESTS" -eq 1 ]; then
 else
   step "5/6  Tests"
   flutter test || echo "Dart tests failed."
-  ( cd android && ./gradlew testDebugUnitTest --no-daemon ) || echo "Kotlin unit tests failed."
+  if [ -x android/gradlew ]; then
+    ( cd android && ./gradlew testDebugUnitTest --no-daemon ) || echo "Kotlin unit tests failed."
+  else
+    echo "android/gradlew missing - skipping Kotlin tests."
+  fi
 fi
 
 # --- 6. build --------------------------------------------------------------

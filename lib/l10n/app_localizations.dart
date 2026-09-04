@@ -1621,6 +1621,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get commonCancel;
+
+  /// No description provided for @builtBy.
+  ///
+  /// In en, this message translates to:
+  /// **'by Khakwani Dev'**
+  String get builtBy;
+
+  /// No description provided for @developer.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get developer;
+
+  /// No description provided for @developerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Khakwani Dev'**
+  String get developerName;
+
+  /// No description provided for @basedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on'**
+  String get basedOn;
+
+  /// No description provided for @basedOnValue.
+  ///
+  /// In en, this message translates to:
+  /// **'WDCable by Jing Jie (MIT)'**
+  String get basedOnValue;
 }
 
 class _AppLocalizationsDelegate

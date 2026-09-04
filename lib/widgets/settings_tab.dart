@@ -145,11 +145,24 @@ class _SettingsTabState extends State<SettingsTab> {
           // About Section
           _buildSection(AppLocalizations.of(context)!.about, Icons.info, [
             _buildInfoTile(
+              AppLocalizations.of(context)!.developer,
+              AppLocalizations.of(context)!.developerName,
+              Icons.person_outline,
+            ),
+            _buildInfoTile(
               AppLocalizations.of(context)!.version,
               widget.state.appVersion.isEmpty
                   ? 'Unknown'
                   : widget.state.appVersion,
               Icons.info_outline,
+            ),
+            // The upstream project is MIT licensed and this app is a derivative
+            // of it, so the credit stays visible in the app itself rather than
+            // only in the LICENSE file.
+            _buildInfoTile(
+              AppLocalizations.of(context)!.basedOn,
+              AppLocalizations.of(context)!.basedOnValue,
+              Icons.handshake_outlined,
             ),
             _buildActionTile(
               AppLocalizations.of(context)!.privacyPolicy,

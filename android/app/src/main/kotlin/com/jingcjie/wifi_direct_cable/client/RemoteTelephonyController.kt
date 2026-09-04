@@ -116,6 +116,11 @@ class RemoteTelephonyController(
             ProtocolFrameType.GATEWAY_STATUS -> {
                 val status = GatewayStatus.fromJson(metadata)
                 lastStatus = status
+                DiagnosticsLogger.log(
+                    "client",
+                    "Gateway status received",
+                    mapOf("simState" to status.simState, "capabilities" to status.capabilities.size)
+                )
                 listener.onGatewayStatus(status)
                 true
             }

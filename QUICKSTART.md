@@ -25,7 +25,7 @@ Wi-Fi Direct cannot be tested on emulators. Two real handsets, or nothing.
 1. Push this repository to GitHub.
 2. **Actions** → **Debug APK** → **Run workflow**.
 3. Wait ~10 minutes.
-4. Download the **wdcable-debug-apk** artifact from the run.
+4. Download the **khakwani-p2p-debug-apk** artifact from the run.
 5. Unzip, copy `app-debug.apk` to both phones, tap to install
    (allow "install from unknown sources").
 

@@ -132,7 +132,28 @@ class TelephonyGateway(
      * gateway that crashes while reporting its own status is worse than one that
      * reports a field as unavailable.
      */
-    override fun readStatus(gatewayVersion: String, deviceName: String): GatewayStatus {
+    override fun readStatus(gatewayVersion: String, deviceName: String): GatewayStatus =
+        try {
+            readStatusInternal(gatewayVersion, deviceName)
+        } catch (exception: Exception) {
+            // Must never throw. This runs on the control read loop's thread via
+            // GatewaySessionHandler, and that loop treats any exception as a dead
+            // channel and degrades the session. A status read failing is worth a
+            // log and an "unknown" status, not a dropped link.
+            DiagnosticsLogger.log(
+                "gateway",
+                "Status read failed",
+                mapOf("errorType" to exception.javaClass.simpleName, "error" to exception.message)
+            )
+            GatewayStatus(
+                simState = TelephonyCodes.SIM_UNKNOWN,
+                callState = TelephonyCodes.CALL_UNKNOWN,
+                gatewayVersion = gatewayVersion,
+                deviceName = deviceName
+            )
+        }
+
+    private fun readStatusInternal(gatewayVersion: String, deviceName: String): GatewayStatus {
         val manager = telephonyManager
         val simState = manager?.let { TelephonyCodes.simStateName(it.simState) }
             ?: TelephonyCodes.SIM_UNKNOWN
@@ -211,10 +232,27 @@ class TelephonyGateway(
         null
     }
 
-    private fun batteryIntent(): Intent? = appContext.registerReceiver(
-        null,
-        IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-    )
+    /**
+     * Sticky-broadcast read for the battery level.
+     *
+     * Wrapped because `registerReceiver` is not as safe as it looks: Android 14
+     * tightened receiver registration, and OEM builds have been seen to throw
+     * here. An uncaught throw would propagate out of [readStatus], through
+     * `GatewaySessionHandler.handle`, and into the control read loop, which
+     * treats any exception as a dead channel and degrades the session. Losing the
+     * whole link because a battery percentage was unavailable is absurd, so the
+     * failure is contained to this one optional field.
+     */
+    private fun batteryIntent(): Intent? = try {
+        appContext.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+    } catch (exception: Exception) {
+        DiagnosticsLogger.log(
+            "gateway",
+            "Battery state unavailable",
+            mapOf("errorType" to exception.javaClass.simpleName)
+        )
+        null
+    }
 
     private fun readBatteryPercent(): Int? {
         val intent = batteryIntent() ?: return null

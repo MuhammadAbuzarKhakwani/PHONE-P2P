@@ -40,6 +40,26 @@ class GatewaySessionHandler(
     fun handle(frame: ProtocolFrame): Boolean {
         val type = frame.type
         if (type !in HANDLED) return false
+        return try {
+            handleInternal(type, frame)
+        } catch (exception: Exception) {
+            // The caller is SessionManager's control read loop, and that loop
+            // degrades the whole session on any exception. A gateway operation
+            // failing must not cost the user their connection.
+            DiagnosticsLogger.log(
+                "gateway",
+                "Gateway frame handling failed",
+                mapOf(
+                    "frameType" to type.protocolName,
+                    "errorType" to exception.javaClass.simpleName,
+                    "error" to exception.message
+                )
+            )
+            true
+        }
+    }
+
+    private fun handleInternal(type: ProtocolFrameType, frame: ProtocolFrame): Boolean {
 
         if (!isSecure()) {
             DiagnosticsLogger.log(
@@ -64,7 +84,10 @@ class GatewaySessionHandler(
         }
 
         when (type) {
-            ProtocolFrameType.GATEWAY_STATUS_REQUEST -> sendStatus()
+            ProtocolFrameType.GATEWAY_STATUS_REQUEST -> {
+                DiagnosticsLogger.log("gateway", "Status requested by peer")
+                sendStatus()
+            }
 
             ProtocolFrameType.CALL_REQUEST -> {
                 val requestId = metadata.optString("requestId", UUID.randomUUID().toString())
@@ -136,6 +159,11 @@ class GatewaySessionHandler(
     /** Pushes the current status, unprompted, e.g. after a call-state change. */
     fun sendStatus() {
         val status = gateway.readStatus(gatewayVersion, deviceName)
+        DiagnosticsLogger.log(
+            "gateway",
+            "Sending status",
+            mapOf("simState" to status.simState, "capabilities" to status.capabilities.size)
+        )
         sendFrame(ProtocolFrameType.GATEWAY_STATUS, status.toJson())
     }
 

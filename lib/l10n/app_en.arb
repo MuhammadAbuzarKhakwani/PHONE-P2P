@@ -702,5 +702,10 @@
   "pairingForgetAll": "Forget all paired devices",
   "pairingNoneStored": "No paired devices",
   "pairingDesynchronised": "This device and the gateway no longer agree on their stored pairing. Forget the device and pair again.",
-  "commonCancel": "Cancel"
+  "commonCancel": "Cancel",
+  "builtBy": "by Khakwani Dev",
+  "developer": "Developer",
+  "developerName": "Khakwani Dev",
+  "basedOn": "Based on",
+  "basedOnValue": "WDCable by Jing Jie (MIT)"
 }

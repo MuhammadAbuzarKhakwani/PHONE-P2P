@@ -3,7 +3,7 @@ name: Debug APK
 # Builds an installable APK with NO secrets and NO local toolchain.
 #
 # Go to Actions -> "Debug APK" -> "Run workflow". When it finishes, download the
-# "wdcable-debug-apk" artifact and install it on both phones.
+# "khakwani-p2p-debug-apk" artifact and install it on both phones.
 #
 # Debug builds are signed with the standard Android debug key, so nothing needs
 # to be configured. That also means these APKs are for testing only and must not
@@ -39,22 +39,17 @@ jobs:
 
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
+        uses: actions/checkout@v7
 
       # Cheap and dependency-free, so it runs first: it catches channel-key
       # mismatches and unterminated literals that the compilers never report.
       - name: Static checks
         id: static
         continue-on-error: true
-        run: python tools/static_checks/run_all.py
+        run: python3 tools/static_checks/run_all.py
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
@@ -111,6 +106,12 @@ jobs:
           set -euo pipefail
           flutter pub get
           flutter precache --android
+          # REQUIRED before any ./gradlew call. android/gradlew and
+          # gradle-wrapper.jar are gitignored in this project, so the wrapper does
+          # not exist in a fresh checkout; the Flutter tool injects it during
+          # configuration. Without this, ./gradlew exits 127 (command not found).
+          flutter build apk --config-only
+          test -x android/gradlew || { echo "gradle wrapper was not generated" >&2; exit 1; }
 
       # Not blocking: this codebase had never been analysed, so the first run is
       # expected to report findings. Seeing them alongside the build result is
@@ -131,14 +132,17 @@ jobs:
         working-directory: android
         run: ./gradlew testDebugUnitTest --no-daemon
 
+      # Gradle only writes these once compilation succeeds, so on a build failure
+      # there is legitimately nothing to collect. `ignore` keeps that quiet.
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-reports
           path: |
-            android/app/build/reports/tests/**
+            android/app/build/reports/**
             android/app/build/test-results/**
+            build/**/*.log
           if-no-files-found: ignore
 
       - name: Build debug APK
@@ -151,9 +155,9 @@ jobs:
 
       - name: Upload APK
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: wdcable-debug-apk
+          name: khakwani-p2p-debug-apk
           path: build/app/outputs/flutter-apk/*.apk
           if-no-files-found: error
 
@@ -162,7 +166,7 @@ jobs:
         shell: bash
         run: |
           {
-            echo "## WDCable debug build"
+            echo "## Khakwani P2P debug build"
             echo
             echo "| Stage | Result |"
             echo "|---|---|"
@@ -173,7 +177,7 @@ jobs:
             echo "| APK build | ${{ steps.apk.outcome }} |"
             echo
             if [[ "${{ steps.apk.outcome }}" == "success" ]]; then
-              echo "Download the **wdcable-debug-apk** artifact below and install it on"
+              echo "Download the **khakwani-p2p-debug-apk** artifact below and install it on"
               echo "both phones, then follow \`QUICKSTART.md\`."
             else
               echo "The APK did not build. Open the **Build debug APK** step above for the"

@@ -128,9 +128,12 @@ class _WiFiDirectHomePageState extends State<WiFiDirectHomePage>
         body: SafeArea(
           child: Column(
             children: [
+              // Slim brand header. The app has no AppBar, so without this it
+              // never shows its own name anywhere.
+              const _BrandHeader(),
               // Modern tab bar with elevated design
               Container(
-                margin: const EdgeInsets.all(16),
+                margin: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardTheme.color,
                   borderRadius: BorderRadius.circular(16),
@@ -206,6 +209,44 @@ class _WiFiDirectHomePageState extends State<WiFiDirectHomePage>
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// App name and author, shown above the tabs.
+///
+/// Deliberately one slim row: this sits on top of a nine-tab interface, so it
+/// earns its vertical space by being compact rather than a full header block.
+class _BrandHeader extends StatelessWidget {
+  const _BrandHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      child: Row(
+        children: [
+          Icon(Icons.hub_outlined, size: 20, color: theme.colorScheme.primary),
+          const SizedBox(width: 10),
+          Text(
+            l10n.appTitle,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
+            ),
+          ),
+          const Spacer(),
+          Text(
+            l10n.builtBy,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
       ),
     );
   }

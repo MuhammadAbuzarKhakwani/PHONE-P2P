@@ -73,7 +73,7 @@ Nothing is hidden. See [`docs/ANDROID_LIMITATIONS.md`](docs/ANDROID_LIMITATIONS.
 ## Get an APK
 
 **No toolchain needed.** Push this repository to GitHub, open
-**Actions → Debug APK → Run workflow**, and download the `wdcable-debug-apk`
+**Actions → Debug APK → Run workflow**, and download the `khakwani-p2p-debug-apk`
 artifact. No signing keys, no secrets.
 
 **Or build locally**, with Flutter 3.44.0, a JDK 17+ and the Android SDK:

@@ -812,4 +812,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get commonCancel => '取消';
+
+  @override
+  String get builtBy => '由 Khakwani Dev 开发';
+
+  @override
+  String get developer => '开发者';
+
+  @override
+  String get developerName => 'Khakwani Dev';
+
+  @override
+  String get basedOn => '基于';
+
+  @override
+  String get basedOnValue => 'WDCable by Jing Jie (MIT)';
 }

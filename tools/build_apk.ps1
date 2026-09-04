@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    One command to check, build and install the WDCable debug APK on Windows.
+    One command to check, build and install the Khakwani P2P debug APK on Windows.
 
 .DESCRIPTION
     Verifies the toolchain, writes android/local.properties if it is missing,
@@ -101,6 +101,16 @@ if (Have python) {
 # --- 4. dependencies and analysis -----------------------------------------
 Step "4/6  Dependencies and analysis"
 flutter pub get
+
+# android/gradlew and gradle-wrapper.jar are gitignored in this project, so a
+# fresh clone has no wrapper. The Flutter tool injects it during configuration;
+# without this, gradlew below fails with "command not found".
+flutter build apk --config-only
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Gradle configuration failed - see the errors above." -ForegroundColor Red
+    exit 1
+}
+
 flutter analyze --no-fatal-infos
 if ($LASTEXITCODE -ne 0) {
     Write-Host "flutter analyze reported findings. Continuing to the build so you" -ForegroundColor Yellow
@@ -115,10 +125,14 @@ if ($SkipTests) {
     flutter test
     if ($LASTEXITCODE -ne 0) { Write-Host "Dart tests failed." -ForegroundColor Yellow }
 
-    Push-Location android
-    .\gradlew.bat testDebugUnitTest --no-daemon
-    if ($LASTEXITCODE -ne 0) { Write-Host "Kotlin unit tests failed." -ForegroundColor Yellow }
-    Pop-Location
+    if (Test-Path (Join-Path $repo "android\gradlew.bat")) {
+        Push-Location android
+        .\gradlew.bat testDebugUnitTest --no-daemon
+        if ($LASTEXITCODE -ne 0) { Write-Host "Kotlin unit tests failed." -ForegroundColor Yellow }
+        Pop-Location
+    } else {
+        Write-Host "android\gradlew.bat missing - skipping Kotlin tests." -ForegroundColor Yellow
+    }
 }
 
 # --- 6. build --------------------------------------------------------------
