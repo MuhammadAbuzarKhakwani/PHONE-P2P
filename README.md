@@ -1,0 +1,201 @@
+# WiFi Direct Cable
+
+<p align="center">
+  <img src="assets/icon.png" alt="WiFi Direct Cable icon" width="96">
+</p>
+
+<p align="center">
+  <strong>Offline peer-to-peer transfer for files, chat, speed tests, and audio over Wi-Fi Direct.</strong>
+</p>
+
+<p align="center">
+  No internet. No router. No hotspot. Just a direct device-to-device connection.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT license">
+  <img src="https://img.shields.io/badge/platform-Android%20%7C%20Windows-brightgreen" alt="Android and Windows">
+  <img src="https://img.shields.io/badge/Made%20with-Flutter-blue.svg" alt="Made with Flutter">
+  <img src="https://img.shields.io/badge/version-2.0.1-orange.svg" alt="Version 2.0.1">
+  <a href="https://shields.rbtlog.dev/com.jingcjie.wifi_direct_cable">
+    <img src="https://shields.rbtlog.dev/simple/com.jingcjie.wifi_direct_cable?style=for-the-badge" alt="Reproducible Builds status">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://apt.izzysoft.de/packages/com.jingcjie.wifi_direct_cable">
+    <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroidButtonGreyBorder_nofont.png" height="80" alt="Get it at IzzyOnDroid">
+  </a>
+</p>
+
+<p align="center">
+Windows:
+</p>
+<p align="center">
+  <a href="https://apps.microsoft.com/store/detail/9MZQMRHFFJJW?cid=DevShareMCLPCS">
+    <img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Get WDCable from the Microsoft Store" width="200">
+  </a>
+</p>
+
+
+
+## What It Does
+
+WiFi Direct Cable creates a private local link between nearby devices using Wi-Fi Direct. Once connected, the devices share one negotiated app session for chat, file transfer, speed testing, and audio.
+
+This repository contains the Flutter Android client. A separate Windows companion app is available here: [WDCableWUI](https://github.com/jingcjie/WDCableWUI).
+
+## Highlights
+
+- Direct device-to-device connection without internet access.
+- High-speed file transfer for local sharing.
+- Real-time chat between connected peers.
+- Low-latency Audio Link using RTP/RTCP over UDP with libopus.
+- Selectable audio quality and latency modes.
+- Built-in upload and download speed tests.
+- Protocol v2 transport with UDP rendezvous and detailed connection diagnostics.
+- Android client with a separate Windows companion app.
+
+## Remote SIM Gateway (in development)
+
+An offline remote SIM gateway built on top of the existing Wi-Fi Direct link. One
+phone keeps the SIM and acts as a **gateway**; a second phone with **no SIM** acts
+as a **client** and drives the gateway's cellular features over the direct link.
+
+No Internet, no cloud, no account, no root. The control link works in airplane
+mode with Wi-Fi on.
+
+**What works**
+
+- Authenticated, encrypted control channel (AES-256-GCM, P-256 ECDH, replay
+  protection) over the existing control and bulk channels
+- Code-based pairing with a confirmation number both phones display
+- Gateway status: SIM, carrier, network, signal, mobile data, battery
+- Remote dial, answer, reject, hang up, with live call state
+- SMS send, and read where Android permits it
+- Per-device compatibility report and a diagnostics screen
+
+**What does not, and will not**
+
+> **This is not a virtual SIM.** The client never gains cellular identity and
+> cannot place a call by itself. Every cellular action happens on the gateway.
+
+- **Remote cellular call audio is not possible.** No supported Android API gives
+  an unprivileged app the call audio stream, so the conversation stays on the
+  gateway phone's own speaker and microphone.
+- **Reading SMS** requires being the phone's default messaging app.
+- **Enabling tethering** cannot be done programmatically by any normal app.
+- **Audio Link traffic is not encrypted** by the app layer — it is RTP over UDP
+  with only the Wi-Fi Direct group's link-layer WPA2.
+
+Every limitation is written up rather than hidden:
+
+| Document | Covers |
+|---|---|
+| [`QUICKSTART.md`](QUICKSTART.md) | get an APK on two phones and make a call |
+| [`docs/FUNCTIONAL_GOALS.md`](docs/FUNCTIONAL_GOALS.md) | every requirement, its status, and how that was checked |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | the codebase as found, and every change since |
+| [`docs/ANDROID_LIMITATIONS.md`](docs/ANDROID_LIMITATIONS.md) | what Android does and does not permit, and why |
+| [`docs/PROTOCOL.md`](docs/PROTOCOL.md) | wire format, pairing, key derivation |
+| [`docs/WIFI_DIRECT.md`](docs/WIFI_DIRECT.md) | discovery, the UDP rendezvous, ports, state model |
+| [`docs/PHONE1_GATEWAY.md`](docs/PHONE1_GATEWAY.md) | setting up and running the gateway phone |
+| [`docs/PHONE2_CLIENT.md`](docs/PHONE2_CLIENT.md) | setting up and running the client phone |
+| [`docs/TEST_PLAN.md`](docs/TEST_PLAN.md) | automated checks, plus 21 manual two-phone tests |
+| [`tools/static_checks/`](tools/static_checks/) | offline checks for defects no compiler catches |
+
+**Get an APK without installing anything:** push to GitHub, then
+**Actions -> Debug APK -> Run workflow**, and download the artifact. Or build
+locally with `.	oolsuild_apk.ps1` (Windows) / `./tools/build_apk.sh`.
+Then follow [`QUICKSTART.md`](QUICKSTART.md).
+
+**Status:** the gateway code is written and unit-tested but **has not yet been
+compiled or run on hardware.** Per-requirement status is in
+[`docs/FUNCTIONAL_GOALS.md`](docs/FUNCTIONAL_GOALS.md).
+
+## Audio Link Use Case
+
+Use an Android device as a mobile microphone sender and the Windows client as the receiver. Audio Link streams libopus audio over RTP/RTCP and provides selectable quality and latency modes for different network conditions.
+
+| Android Audio Link | Windows Audio Link |
+| :---: | :---: |
+| <img src="assets/android_audio.png" alt="Android Audio Link screen" width="260"> | <img src="assets/winui_audio.png" alt="Windows Audio Link screen" width="520"> |
+
+## Screenshots
+
+| Connection | Chat | Speed Test | File Transfer |
+| :---: | :---: | :---: | :---: |
+| <img src="assets/s1.jpg" alt="Connection tab" width="200"> | <img src="assets/s2.jpg" alt="Chat tab" width="200"> | <img src="assets/s3.jpg" alt="Speed Test tab" width="200"> | <img src="assets/s4.jpg" alt="File Transfer tab" width="200"> |
+
+
+## What's New in 2.0.1
+
+Version 2.0.1 is the Protocol v2 release. It separates Wi-Fi Direct group-owner/client roles from WDCable TCP listener/connector roles, uses UDP rendezvous when needed, and upgrades Audio Link to RTP/RTCP over UDP with libopus.
+
+- More reliable Wi-Fi Direct session setup, including a fix for Windows endpoint routing issues.
+- Wi-Fi Direct clients now own the WDCable TCP listeners.
+- UDP rendezvous lets Android group-owner devices safely discover the peer listener endpoint.
+- Expanded diagnostics for device roles, selected endpoints, rendezvous, TCP setup, and handshake failures.
+- Lower-latency Audio Link streaming using RTP/RTCP over UDP and libopus.
+- Sender quality presets: Standard (32 kbps), Balanced (64 kbps), High (128 kbps), and Near lossless (256 kbps).
+- Sender latency modes: Low latency and Stable.
+- Improved audio statistics for configured and measured bitrate, packet loss, jitter, late drops, buffer level, and RTCP reports.
+
+> [!IMPORTANT]
+> Protocol v2 is not compatible with Protocol v1. Both devices must run WDCable 2.0.1 or another Protocol v2-compatible build.
+>
+> Android 2.0.1 supports `arm64-v8a` and `x86_64`. The 32-bit `armeabi-v7a` ABI is not supported.
+
+
+## Platform Support
+
+| Platform | Status | Repository |
+| --- | --- | --- |
+| Android | Android 13+; `arm64-v8a` or `x86_64` | This repository |
+| Windows | Separate companion client | [WDCableWUI](https://github.com/jingcjie/WDCableWUI) |
+
+## Getting Started
+
+### Prerequisites
+
+- Flutter SDK: [installation guide](https://flutter.dev/docs/get-started/install)
+- Android Studio or VS Code
+- An Android device with Wi-Fi Direct support
+
+### Run Locally
+
+```sh
+git clone https://github.com/jingcjie/WDCable_flutter.git
+cd WDCable_flutter
+flutter pub get
+flutter run
+```
+
+## Troubleshooting
+
+- Make sure Wi-Fi is enabled on both devices.
+- Grant nearby-device, microphone, and notification permissions when Android asks.
+- Keep both devices on the connection screen while pairing.
+- If discovery fails, turn Wi-Fi off and on, then scan again.
+- If a connection fails after updating one device, update the other device to WDCable 2.0.1 or another Protocol v2-compatible build.
+- For Android-to-Windows testing, run the Windows companion app from [WDCableWUI](https://github.com/jingcjie/WDCableWUI).
+
+## Coming Soon
+
+- Camera and video streaming over Wi-Fi Direct.
+
+## Contributing
+
+Contributions are welcome. For larger changes, please open an issue first so the implementation can be discussed before a pull request.
+
+```sh
+git checkout -b feature/your-feature
+git commit -m "Add your feature"
+git push origin feature/your-feature
+```
+
+Then open a pull request.
+
+## License
+
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+"# PHONE-P2P" 
