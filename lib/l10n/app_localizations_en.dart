@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'WiFi Direct Cable';
+  String get appTitle => 'Khakwani P2P';
 
   @override
   String get wifiP2pDriver => 'WiFi P2P Driver';

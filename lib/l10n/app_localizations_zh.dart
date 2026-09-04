@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => 'WiFi直连线缆';
+  String get appTitle => 'Khakwani P2P';
 
   @override
   String get wifiP2pDriver => 'WiFi P2P驱动';

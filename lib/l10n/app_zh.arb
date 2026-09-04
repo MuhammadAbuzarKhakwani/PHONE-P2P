@@ -1,6 +1,6 @@
 {
   "@@locale": "zh",
-  "appTitle": "WiFi直连线缆",
+  "appTitle": "Khakwani P2P",
   "wifiP2pDriver": "WiFi P2P驱动",
   "readyForConnections": "准备连接",
   "disabledEnableWifi": "已禁用 - 启用WiFi以继续",

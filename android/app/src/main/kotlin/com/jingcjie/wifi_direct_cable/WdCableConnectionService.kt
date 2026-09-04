@@ -102,7 +102,7 @@ class WdCableConnectionService : Service() {
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("WD Cable connected")
+            .setContentTitle("Khakwani P2P connected")
             .setContentText("Keeping the active Wi-Fi Direct session available")
             .setContentIntent(openIntent)
             .setOngoing(true)
@@ -119,7 +119,7 @@ class WdCableConnectionService : Service() {
         val manager = getSystemService(NotificationManager::class.java)
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "WD Cable connection",
+            "Khakwani P2P connection",
             NotificationManager.IMPORTANCE_LOW
         ).apply {
             description = "Active Wi-Fi Direct connection status"

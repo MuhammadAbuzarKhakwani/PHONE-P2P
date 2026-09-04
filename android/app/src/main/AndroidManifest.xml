@@ -43,7 +43,7 @@
     -->
     <uses-feature android:name="android.hardware.telephony" android:required="false" />
     <application
-        android:label="WD Cable"
+        android:label="Khakwani P2P"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

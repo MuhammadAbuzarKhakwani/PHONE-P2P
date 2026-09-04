@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
     return Consumer2<ThemeProvider, LanguageProvider>(
       builder: (context, themeProvider, languageProvider, child) {
         return MaterialApp(
-          title: 'WiFi Direct Cable',
+          title: 'Khakwani P2P',
           theme: AppThemes.lightTheme,
           darkTheme: AppThemes.darkTheme,
           themeMode: themeProvider.themeMode,
